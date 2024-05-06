@@ -3,6 +3,7 @@ setopt localoptions extendedglob clobber
 function __zconvey_usage_zc() {
     __zconvey_pinfo2 "Sends specified commands to given (via ID or NAME) Zsh session"
     __zconvey_pinfo "Usage: zc {-i ID}|{-n NAME} [-q|--quiet] [-v|--verbose] [-h|--help] [-a|--ask] [-r|--raw] COMMAND ARGUMENT ..."
+    print -- "-g/--get                 - get ID of Zsh session"
     print -- "-h/--help                - this message"
     print -- "-i ID / --id ID          - ID (number) of Zsh session"
     print -- "-n NAME / --name NAME    - NAME of Zsh session"
@@ -13,10 +14,13 @@ function __zconvey_usage_zc() {
 }
 
 local -A opthash
-zparseopts -D -A opthash h -help q -quiet v -verbose i: -id: n: -name: a -ask r -raw || { __zconvey_usage_zc; return 1; }
+zparseopts -D -A opthash h -help q -quiet g -get v -verbose i: -id: n: -name: a -ask r -raw || { __zconvey_usage_zc; return 1; }
 
 integer have_id=0 have_name=0 verbose=0 quiet=0 ask=0 raw=0
 local id name
+
+# Get ID
+(( ${+opthash[-g]} + ${+opthash[--get]} )) && { zc-id; return 0; }
 
 # Help
 (( ${+opthash[-h]} + ${+opthash[--help]} )) && { __zconvey_usage_zc; return 0; }
