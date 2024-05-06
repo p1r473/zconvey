@@ -42,6 +42,7 @@ typeset -gH ZCONVEY_RUN_SECONDS=$(( SECONDS + 4 ))
 typeset -gH ZCONVEY_SCHEDULE_ORIGIN
 typeset -gHa ZCONVEY_NNS
 command mkdir -p "$ZCONVEY_IO_DIR" "$ZCONVEY_LOCKS_DIR" "$ZCONVEY_NAMES_DIR" "$ZCONVEY_OTHER_DIR"
+zstyle ':zconvey:*' init_complete false
 
 #
 # Helper functions
@@ -133,6 +134,9 @@ function __zconvey_is_session_active() {
 
 function zc-id() {
     __zconvey_get_name_of_id "$ZCONVEY_ID"
+    if ! zstyle -T ':zconvey:*' init_complete; then
+        return
+    fi
     if [[ -z "$REPLY" ]]; then
         print "This Zshell's ID: \033[1;33m<${ZCONVEY_ID}>\033[0m (no name assigned)";
     else
